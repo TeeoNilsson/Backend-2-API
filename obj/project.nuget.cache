@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "RTnuhTYb3SY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\teoni\\Documents\\BackendKurs\\Backend2\\bokRecension\\bokRecension.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\teoni\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.1\\microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
+    "C:\\Users\\teoni\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
