@@ -1,5 +1,3 @@
-using Microsoft.Win32;
-
 public class Book
 {
     public Guid Id { get; set; }
