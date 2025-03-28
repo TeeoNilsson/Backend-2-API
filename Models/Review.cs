@@ -6,7 +6,7 @@ public class Review
     public Guid UserId { get; set; }
     public Guid BookId { get; set; }
     public int Likes { get; set; }
-    public DateTime DateTime { get; set; } = DateTime.UtcNow
+    public DateTime DateTime { get; set; } = DateTime.UtcNow;
 
     public Review(int rating, string comment, Guid userid, Guid bookid)
     {
@@ -17,7 +17,7 @@ public class Review
         this.BookId = bookid;
         this.Likes = 0;
         this.DateTime = DateTime.UtcNow;
-    };
+    }
 
-public Review();
+    public Review() { }
 }
