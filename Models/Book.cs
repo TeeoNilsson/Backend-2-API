@@ -14,5 +14,5 @@ public class Book
         this.Reviews = new List<Review>();
     };
 
-    public Book { };
+    public Book() { };
 }
