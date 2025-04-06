@@ -1,6 +1,6 @@
 public class Review
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public int Rating { get; set; }
     public string Comment { get; set; }
     public Guid UserId { get; set; }
@@ -10,7 +10,6 @@ public class Review
 
     public Review(int rating, string comment, Guid userid, Guid bookid)
     {
-        this.Id = new Guid();
         this.Rating = rating;
         this.Comment = comment;
         this.UserId = userid;
