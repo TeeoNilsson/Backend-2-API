@@ -7,7 +7,7 @@ public class ReviewService : IReviewService
         _reviewRepository = reviewRepository;
     }
 
-    public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(Guid bookId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsByBookIdAsync(Guid bookId)
     {
         return await _reviewRepository.GetBookByIdAsync(bookId);
     }

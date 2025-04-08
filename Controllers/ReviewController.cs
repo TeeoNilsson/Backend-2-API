@@ -20,7 +20,7 @@ namespace Backend_2_API.Controllers
 
         //Hämta alla reviews på en specifik bok
         [HttpGet("books/{bookId}/reviews")]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviewsForBook(Guid bookId)
+        public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsForBook(Guid bookId)
         {
 
             var result = await _reviewService.GetReviewsByBookIdAsync(bookId);
