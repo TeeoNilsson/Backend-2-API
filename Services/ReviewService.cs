@@ -2,18 +2,17 @@ public class ReviewService : IReviewService
 {
     private readonly IReviewRepository _reviewRepository;
 
-    public async ReviewService(IReviewRepository reviewRepository)
+    public ReviewService(IReviewRepository reviewRepository)
     {
         _reviewRepository = reviewRepository;
     }
-    
+
     public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(Guid bookId)
     {
-        // TODO: Implementera logik för att hämta alla recensioner för en bok
-        throw new NotImplementedException();
+        return await _reviewRepository.GetBookByIdAsync(bookId);
     }
 
-    public async Task<ReviewService> AddReviewAsync(Review review)
+    public async Task<Review> AddReviewAsync(Review review)
     {
         //TODO: Implementera logik för att lägga till en recension
         throw new NotImplementedException();
@@ -36,6 +35,4 @@ public class ReviewService : IReviewService
         // TODO: Implementera logik för att gilla recensioner
         throw new NotImplementedException();
     }
-
-
 }

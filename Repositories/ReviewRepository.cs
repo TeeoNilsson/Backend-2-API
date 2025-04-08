@@ -1,9 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+
 public class ReviewRepository : IReviewRepository
 {
+    private readonly AppDbContext _context;
+
+    public ReviewRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+
     public async Task<IEnumerable<Review>> GetBookByIdAsync(Guid bookId)
     {
-         // TODO: Implementera DB-logik för att hämta recensioner för att hämta recensioner till en bok
-        throw new NotImplementedException();
+        return await _context.Reviews.Where(r => r.BookId == bookId).ToListAsync();
     }
 
     public async Task<Review> AddAsync(ReviewRepository review)
@@ -29,5 +37,4 @@ public class ReviewRepository : IReviewRepository
         // TODO: Implemenetera DB-logik för att gilla en recension
         throw new NotImplementedException();
     }
-   
 }
