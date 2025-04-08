@@ -2,11 +2,11 @@ public class ReviewRepository : IReviewRepository
 {
     public async Task<IEnumerable<Review>> GetBookByIdAsync(Guid bookId)
     {
-         // TODO: Implementera DB-logik för att hämta recensioner för att hämta recensioner till en bok
+        // TODO: Implementera DB-logik för att hämta recensioner för att hämta recensioner till en bok
         throw new NotImplementedException();
     }
 
-    public async Task<Review> AddAsync(ReviewRepository review)
+    public async Task<Review> AddAsync(Review review)
     {
         // TODO: Implementera DB-logik för att lägga till recension
         throw new NotImplementedException();
@@ -29,5 +29,4 @@ public class ReviewRepository : IReviewRepository
         // TODO: Implemenetera DB-logik för att gilla en recension
         throw new NotImplementedException();
     }
-   
 }
