@@ -9,8 +9,7 @@ public class ReviewService : IReviewService
 
     public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(Guid bookId)
     {
-        // TODO: Implementera logik för att hämta alla recensioner för en bok
-        throw new NotImplementedException();
+        return await _reviewRepository.GetBookByIdAsync(bookId);
     }
 
     public async Task<Review> AddReviewAsync(Review review)
