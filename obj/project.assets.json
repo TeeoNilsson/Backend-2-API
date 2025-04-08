@@ -4689,19 +4689,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\sanna\\.nuget\\packages\\": {}
+    "/Users/sarablomqvist/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\Backend_2\\grupprojekt_bokrecensioner\\Backend-2-API\\bokRecension.csproj",
+      "projectUniqueName": "/Users/sarablomqvist/Desktop/Frontendutvecklare/Backend 2/Backend-2-API/bokRecension.csproj",
       "projectName": "bokRecension",
-      "projectPath": "C:\\Projects\\Backend_2\\grupprojekt_bokrecensioner\\Backend-2-API\\bokRecension.csproj",
-      "packagesPath": "C:\\Users\\sanna\\.nuget\\packages\\",
-      "outputPath": "C:\\Projects\\Backend_2\\grupprojekt_bokrecensioner\\Backend-2-API\\obj\\",
+      "projectPath": "/Users/sarablomqvist/Desktop/Frontendutvecklare/Backend 2/Backend-2-API/bokRecension.csproj",
+      "packagesPath": "/Users/sarablomqvist/.nuget/packages/",
+      "outputPath": "/Users/sarablomqvist/Desktop/Frontendutvecklare/Backend 2/Backend-2-API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\sanna\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/sarablomqvist/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -4785,7 +4785,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
