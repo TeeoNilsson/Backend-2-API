@@ -22,7 +22,8 @@ namespace Backend_2_API.Controllers
         [HttpGet("books/{bookId}/reviews")]
         public async Task<ActionResult<IEnumerable<Review>>> GetReviewsForBook(Guid bookId)
         {
-            var result = await _revireService.GetReviewsForBookIdAsunc(bookId);
+            var result = await _reviewService.GetReviewsByBookIdAsync(bookId);
+
             return Ok(result);
         }
     }
