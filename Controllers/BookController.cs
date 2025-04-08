@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 [ApiController]
 public class BookController(AppDbContext db) : ControllerBase
 {
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
     {
