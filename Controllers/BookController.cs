@@ -1,20 +1,82 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks; 
+using BookReviewApi.Models;
+using BookReviewApi.Services;
 
-[Route("api/books")]
-[ApiController]
-public class BookController(AppDbContext db) : ControllerBase
+namespace BookReviewApi.Controllers
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BooksController : ControllerBase
     {
-        return await db.Books.ToListAsync();
+        private readonly IBookService _bookService;
+
+        public BooksController(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
+
+
+        // //Get all books
+        // [HttpGet]
+        // public async Task<IActionResult> GetBooks()
+        // {
+        //     var books = await _bookService.GetAllBooksAsync();
+        //     return Ok(books);
+        // }
+
+        // //Get book with id
+        // [HttpGet("{id}")]
+        // public async Task<IActionResult> GetBook(Guid id)
+        // {
+        //     var book = await _bookService.GetBookByIdAsync(id);
+
+        //     if (book == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+
+        //     return Ok(book);
+        // }
+
+        //Add a new book
+        [HttpPost]
+        public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request, string UserId )
+        {
+            try
+            {
+                //change to check stored users when identity core is implemented
+               if (UserId == null)
+               {
+                 return Unauthorized();
+               }
+
+               var book = await _bookService.CreateBook(request, UserId);
+               return Ok(book);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        }
     }
-}
 
 
-// Hämta en bok med specifikt id - inkludera recensioner
-// Lägga till en bok
-// Uppdatera en bok
-// Radera en bok
-// Like/Dislike
+    public class CreateBookRequest
+    {
+        public required string Title { get; set; }
+        public required string Description { get; set; }
+        public required string Author { get; set; }
+    }
+
+    public class BookResponse
+    {
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public List<Review> Reviews { get; set; }
+    public string Author { get; set; }
+    public int Likes { get; set; }
+    }

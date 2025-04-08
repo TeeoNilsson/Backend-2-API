@@ -1,3 +1,4 @@
+using BookReviewApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -11,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddOpenApi();
 
 // Registrering av Review Service och Repository
-builder.Services.AddScoped<IReviewServices, ReviewServices>();
+//builder.Services.AddScoped<IReviewServices, ReviewServices>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 // Registrering av Book Service och Repository
