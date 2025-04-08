@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 
-//Lägga till en review
 //Like/Dislike
 //Ta bort review
 //Redigera review
@@ -26,6 +25,14 @@ namespace Backend_2_API.Controllers
             var result = await _reviewService.GetReviewsByBookIdAsync(bookId);
 
             return Ok(result);
+        }
+
+        //Lägga till en review
+        [HttpPost]
+        public async Task<ActionResult> CreateReview([FromBody] CreateReviewDto dto)
+        {
+            var createdId = await _reviewService.CreateReviewAsync(dto);
+            return createdIdAtAction(nameof(GetReviewsForBook), new {bookId = dto.BookId}, new {id = createdId})
         }
     }
 }
