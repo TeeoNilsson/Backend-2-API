@@ -486,3 +486,11 @@ $RECYCLE.BIN/
 # Appsettings
 appsettings.json
 
+# NuGet auto-generated project files
+*.nuget.g.props
+*.nuget.g.targets
+*.nuget.dgspec.json
+ 
+# VS Code specific cache
+project.assets.json
+project.nuget.cache
