@@ -7,16 +7,35 @@ public class ReviewService : IReviewService
         _reviewRepository = reviewRepository;
     }
 
-    public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(Guid bookId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsByBookIdAsync(Guid bookId)
     {
-        // TODO: Implementera logik för att hämta alla recensioner för en bok
-        throw new NotImplementedException();
+        var reviews = await _reviewRepository.GetBookByIdAsync(bookId);
+
+        return reviews.Select(r => new ReviewDto
+        {
+            Id = r.Id,
+            Rating = r.Rating,
+            Comment = r.Comment,
+            UserId = r.UserId,
+            BookId = r.BookId,
+            Likes = r.Likes,
+            CreatedAt = r.DateTime,
+        });
     }
 
-    public async Task<Review> AddReviewAsync(Review review)
+    public async Task<Guid> CreateReviewAsync(CreateReviewDto dto)
     {
-        //TODO: Implementera logik för att lägga till en recension
-        throw new NotImplementedException();
+        var newReview = new Review
+        {
+            Rating = dto.Rating,
+            Comment = dto.Comment,
+            BookId = dto.BookId,
+            Likes = 0,
+            DateTime = DateTime.UtcNow,
+        };
+
+        var CreatedReview = await _reviewRepository.AddReviewAsync(newReview);
+        return CreatedReview.Id;
     }
 
     public async Task<bool> UpdateReviewAsync(Review review)
