@@ -490,7 +490,10 @@ appsettings.json
 *.nuget.g.props
 *.nuget.g.targets
 *.nuget.dgspec.json
- 
+
 # VS Code specific cache
 project.assets.json
 project.nuget.cache
+
+Obj/
+obj/
