@@ -17,47 +17,49 @@ namespace Backend_2_API.Controllers
         [HttpGet("books/{bookId}/reviews")]
         public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsForBook(Guid bookId)
         {
-
             var result = await _reviewService.GetReviewsByBookIdAsync(bookId);
 
             return Ok(result);
         }
 
         //Lägga till en review
-        // [Authorize] Lägga till när Identity är klart!
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> CreateReview([FromBody] CreateReviewDto dto)
         {
             try
             {
-            var createdId = await _reviewService.CreateReviewAsync(dto);
-            return createdIdAtAction(nameof(GetReviewsForBook), new {bookId = dto.BookId}, new {id = createdId})
+                var createdId = await _reviewService.CreateReviewAsync(dto);
+                return CreatedAtAction(
+                    nameof(GetReviewsForBook),
+                    new { bookId = dto.BookId },
+                    new { id = createdId }
+                );
             }
-            catch(ArgumentExeption ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Ett oväntat fel inträffade")
+                return StatusCode(500, "Ett oväntat fel inträffade");
             }
-
         }
 
         //Redigera review
-        // [Authorize] Lägga till när Identity är klart!
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReview(Guid id, [FromBody] UpdateReviewDto dto)
         {
             var success = await _reviewService.UpdateReviewAsync(id, dto);
-            if (!success) 
+            if (!success)
             {
                 return NotFound();
-            } 
+            }
             return NoContent();
         }
 
-        // [Authorize] Lägga till när Identity är klart!
+        [Authorize]
         //Ta bort review
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReview(Guid id)
@@ -72,7 +74,18 @@ namespace Backend_2_API.Controllers
             return NoContent();
         }
 
+        [Authorize]
         //Like/Dislike
-        
+        [HttpPost("{id}/like")]
+        public async Task<IActionResult> LikeReview(Guid id)
+        {
+            var success = await _reviewService.LikeReviewAsync(id);
+
+            if (!success)
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
     }
 }
