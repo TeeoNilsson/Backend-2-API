@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.AddAuthorization;
 
 [Route("api/books")]
 [ApiController]
+[Authorize]
 public class BookController(AppDbContext db) : ControllerBase
 {
     [HttpGet]

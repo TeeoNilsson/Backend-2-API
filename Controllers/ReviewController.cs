@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.AddAuthorization;
 
 //Like/Dislike
 //Ta bort review
@@ -8,6 +10,7 @@ namespace Backend_2_API.Controllers
 {
     [Route("api/reviews")]
     [ApiController]
+    [Authorize]
     public class ReviewController : ControllerBase
     {
         private readonly IReviewService _reviewService;
