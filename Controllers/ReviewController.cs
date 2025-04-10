@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.AddAuthorization;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/reviews")]
 [ApiController]
+[Authorize]
 public class ReviewController : ControllerBase
 {
     private readonly IReviewService _reviewService;
@@ -23,7 +23,6 @@ public class ReviewController : ControllerBase
     }
 
     //Lägga till en review
-    [Authorize]
     [HttpPost]
     public async Task<ActionResult> CreateReview([FromBody] CreateReviewDto dto)
     {
@@ -47,7 +46,6 @@ public class ReviewController : ControllerBase
     }
 
     //Redigera review
-    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateReview(Guid id, [FromBody] UpdateReviewDto dto)
     {
@@ -59,7 +57,6 @@ public class ReviewController : ControllerBase
         return NoContent();
     }
 
-    [Authorize]
     //Ta bort review
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteReview(Guid id)
@@ -74,7 +71,6 @@ public class ReviewController : ControllerBase
         return NoContent();
     }
 
-    [Authorize]
     //Like/Dislike
     [HttpPost("{id}/like")]
     public async Task<IActionResult> LikeReview(Guid id)

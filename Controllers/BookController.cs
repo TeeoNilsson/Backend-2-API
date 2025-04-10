@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.AddAuthorization;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/books")]
 [ApiController]

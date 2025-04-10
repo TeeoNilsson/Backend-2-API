@@ -54,21 +54,24 @@ public class ReviewService : IReviewService
         return newReview;
     }
 
-    public async Task<bool> UpdateReviewAsync(Review review)
+    public async Task<bool> UpdateReviewAsync(Guid id, UpdateReviewDto dto)
     {
         // TODO: Implementera logik för att redigera recension
         //Behöver jag ta in den gamla och en ny review, eller den gamla samt aktuell info/dto?
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        return false;
     }
 
-    public async Task DeleteReviewAsync(Guid reviewId)
+    public async Task<bool> DeleteReviewAsync(Guid reviewId)
     {
         // TODO: Implementera logik för att radera recension
         int removedCount = await reviewRepository.DeleteAsync(reviewId);
         if (removedCount <= 0)
         {
-            throw new KeyNotFoundException("Review does not exist.");
+            // throw new KeyNotFoundException("Review does not exist.");
+            return false;
         }
+        return true;
     }
 
     public async Task<bool> LikeReviewAsync(Guid reviewId)

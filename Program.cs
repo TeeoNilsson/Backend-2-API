@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -7,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization(option =>
 {
-    options.AddPolicy("create_book", policy =>
+    option.AddPolicy("create_book", policy =>
     {
         policy.RequireAuthenticatedUser();
     });
