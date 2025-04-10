@@ -1,9 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 
-//Like/Dislike
-//Ta bort review
-//Redigera review
-
 namespace Backend_2_API.Controllers
 {
     [Route("api/reviews")]
@@ -49,7 +45,7 @@ namespace Backend_2_API.Controllers
         }
 
         //Redigera review
-
+        // [Authorize] Lägga till när Identity är klart!
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReview(Guid id, [FromBody] UpdateReviewDto dto)
         {
@@ -59,8 +55,24 @@ namespace Backend_2_API.Controllers
                 return NotFound();
             } 
             return NoContent();
-            
-           
         }
+
+        // [Authorize] Lägga till när Identity är klart!
+        //Ta bort review
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReview(Guid id)
+        {
+            var success = await _reviewService.DeleteReviewAsync(id);
+
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
+        //Like/Dislike
+        
     }
 }
