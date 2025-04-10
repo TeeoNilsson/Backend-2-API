@@ -28,11 +28,39 @@ namespace Backend_2_API.Controllers
         }
 
         //Lägga till en review
+        // [Authorize] Lägga till när Identity är klart!
         [HttpPost]
         public async Task<ActionResult> CreateReview([FromBody] CreateReviewDto dto)
         {
+            try
+            {
             var createdId = await _reviewService.CreateReviewAsync(dto);
             return createdIdAtAction(nameof(GetReviewsForBook), new {bookId = dto.BookId}, new {id = createdId})
+            }
+            catch(ArgumentExeption ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, "Ett oväntat fel inträffade")
+            }
+
+        }
+
+        //Redigera review
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateReview(Guid id, [FromBody] UpdateReviewDto dto)
+        {
+            var success = await _reviewService.UpdateReviewAsync(id, dto);
+            if (!success) 
+            {
+                return NotFound();
+            } 
+            return NoContent();
+            
+           
         }
     }
 }
