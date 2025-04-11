@@ -1,22 +1,40 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-[Route("api/books")]
 [ApiController]
+[Route("api/books")]
 [Authorize]
-public class BookController(AppDbContext db) : ControllerBase
+
+public class BookController : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
-    {
-        return await db.Books.ToListAsync();
+    private readonly IBookService bookService;
+    private readonly ILogger<BookController> logger;
+    public BookController(IBookService bookService, ILogger<BookController> logger){ 
+        this.bookService = bookService;
+        this.logger = logger;
+    }
+    [HttpPost]
+    public async Task<IActionResult> CreateBook([FromBody]CreateBookRequest request) {
+        try{
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userId == null) {
+                return Unauthorized();
+            }
+            var book = await bookService.CreateBook(request, userId);
+            return CreatedAtAction(nameof(CreateBook), new {title = request.Title});
+        } 
+        catch(ArgumentException exception) {
+            return BadRequest(exception.Message);
+        }
+        catch(Exception exception) {
+            logger.LogError("Error", exception.Message);
+            return StatusCode(500, "Error");
+        }
     }
 }
-
-
-// Hämta en bok med specifikt id - inkludera recensioner
-// Lägga till en bok
-// Uppdatera en bok
-// Radera en bok
-// Like/Dislike
+public class CreateBookRequest {
+    public required string Title { get; set; }
+    public required string Description { get; set; }
+    public required string Author { get; set; }
+}
