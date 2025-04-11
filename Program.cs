@@ -32,6 +32,8 @@ builder.Services.AddIdentityCore<User>()
 .AddApiEndpoints();
 builder.Services.AddAuthorization();
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -43,5 +45,5 @@ app.UseHttpsRedirection();
 app.MapIdentityApi<User>();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapControllers();
 app.Run();

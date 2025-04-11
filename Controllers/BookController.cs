@@ -22,7 +22,7 @@ public class BookController : ControllerBase
                 return Unauthorized();
             }
             var book = await bookService.CreateBook(request, userId);
-            return CreatedAtAction(nameof(CreateBook), new {title = request.Title});
+            return CreatedAtAction(nameof(CreateBook), new {id = book.Id}, book);
         } 
         catch(ArgumentException exception) {
             return BadRequest(exception.Message);
