@@ -6,26 +6,74 @@ public class BookService : IBookService
     {
         _bookRepository = bookRepository;
     }
-    public async Task<Book> AddBookAsync(Book book)
+
+    public async Task<BookDto> AddBookAsync(CreateBookDto dto)
     {
-        return book;
+        // Här antar vi att User hämtas av UserId – beroende på hur du hanterar det
+        var user = new User { Id = dto.UserId }; // Du kan behöva hämta detta från DB
+
+        var book = new Book(dto.Title, dto.Description, dto.Author, user);
+        var createdBook = await _bookRepository.AddAsync(book);
+
+        return new BookDto
+        {
+            Id = createdBook.Id,
+            Title = createdBook.Title,
+            Description = createdBook.Description,
+            Author = createdBook.Author,
+            Likes = createdBook.Likes,
+            Reviews = new List<ReviewDto>() // tom från början
+        };
     }
 
-    public async Task<Book?> GetBookByIdAsync(Guid id)
+    public async Task<BookDto?> GetBookByIdAsync(Guid id)
     {
-        // TODO: Hämta bok med specifikt id
-        return null!;
+        var book = await _bookRepository.GetByIdAsync(id);
+
+        if (book == null) return null;
+
+        return new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Description = book.Description,
+            Author = book.Author,
+            Likes = book.Likes,
+            Reviews = book.Reviews.Select(r => new ReviewDto
+            {
+                Id = r.Id,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                Likes = r.Likes,
+                CreatedAt = r.DateTime
+            }).ToList()
+        };
     }
 
-    public async Task<IEnumerable<Book>> GetAllBooksAsync()
+    public async Task<IEnumerable<BookDto>> GetAllBooksAsync()
     {
-        // TODO: Hämta alla böcker
-        return new List<Book>();
+        var books = await _bookRepository.GetAllAsync();
+
+        return books.Select(book => new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Description = book.Description,
+            Author = book.Author,
+            Likes = book.Likes,
+            Reviews = book.Reviews.Select(r => new ReviewDto
+            {
+                Id = r.Id,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                Likes = r.Likes,
+                CreatedAt = r.DateTime
+            }).ToList()
+        });
     }
 
     public async Task<bool> LikeBookAsync(Guid bookId)
     {
-        // Gilla en bok
-        return false;
+        return await _bookRepository.LikeAsync(bookId);
     }
 }
