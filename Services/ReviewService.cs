@@ -2,19 +2,23 @@ using Microsoft.EntityFrameworkCore;
 public class ReviewService : IReviewService
 {
     private readonly IReviewRepository reviewRepository;
+    private readonly IBookService bookService;
 
-    public ReviewService(IReviewRepository reviewRepository)
+    public ReviewService(IReviewRepository reviewRepository, IBookService bookService)
     {
         this.reviewRepository = reviewRepository;
+        this.bookService = bookService;
     }
 
     public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(Guid bookId)
     {
-        //TODO
-        //Kolla om det finns en book med dto.BookId här
+        //Kollar om det finns en bok med bookId
+        var book =
+            await bookService.GetBookByIdAsync(bookId)
+            ?? throw new ArgumentNullException("Book not found");
 
         //Hämtar alla reviews för boken
-        var reviews = await reviewRepository.GetBookByIdAsync(bookId);
+        var reviews = await reviewRepository.GetBookByIdAsync(book.Id);
 
         //Kollar om boken har några reviews
         if (reviews == null || !reviews.Any())
@@ -34,15 +38,23 @@ public class ReviewService : IReviewService
             throw new ArgumentException("Rating must be more than 0");
         }
 
+        if (dto.Rating > 10)
+        {
+            throw new ArgumentException("Rating can not be more than 10");
+        }
+
         //Kontrollerar att kommentaren är minst 5 tecken
         if (string.IsNullOrEmpty(dto.Comment) || dto.Comment.Length < 5)
         {
             throw new ArgumentException("Comment must not be empty or less than 5 characters");
         }
 
-        //TODO
-        //Kolla om det finns en book med dto.BookId här
-        //Kolla om det finns en användare med dto.UserId här - (alt auth?)
+        //Kollar om det finns en bok med bookId
+        var book =
+            await bookService.GetBookByIdAsync(dto.BookId)
+            ?? throw new ArgumentNullException("Book not found");
+
+        //Kolla om det finns en användare med dto.UserId här?
 
         //Skapar en ny review från dton vi fått från controllern
         var newReview = new Review(dto.Rating, dto.Comment, dto.UserId, dto.BookId);
@@ -56,10 +68,28 @@ public class ReviewService : IReviewService
 
     public async Task<bool> UpdateReviewAsync(Guid id, UpdateReviewDto dto)
     {
-        // TODO: Implementera logik för att redigera recension
-        //Behöver jag ta in den gamla och en ny review, eller den gamla samt aktuell info/dto?
-        // throw new NotImplementedException();
-        return false;
+        //Validera information
+        //Kontrollerar att rating är mer än 0
+        if (dto.Rating <= 0)
+        {
+            /* throw new ArgumentException("Rating must be more than 0"); */
+            return false;
+        }
+
+        if (dto.Rating > 10)
+        {
+            /* throw new ArgumentException("Rating can not be more than 10"); */
+            return false;
+        }
+
+        //Kontrollerar att kommentaren är minst 5 tecken
+        if (string.IsNullOrEmpty(dto.Comment) || dto.Comment.Length < 5)
+        {
+            /* throw new ArgumentException("Comment must not be empty or less than 5 characters"); */
+            return false;
+        }
+
+        return await reviewRepository.UpdateAsync(id, dto);
     }
 
     public async Task<bool> DeleteReviewAsync(Guid reviewId)
@@ -77,6 +107,6 @@ public class ReviewService : IReviewService
     public async Task<bool> LikeReviewAsync(Guid reviewId)
     {
         // TODO: Implementera logik för att gilla recensioner
-        throw new NotImplementedException();
+        return await reviewRepository.LikeAsync(reviewId);
     }
 }
