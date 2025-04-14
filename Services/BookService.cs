@@ -1,5 +1,11 @@
 public class BookService : IBookService
 {
+    private readonly IBookRepository _bookRepository;
+
+    public BookService(IBookRepository bookRepository)
+    {
+        _bookRepository = bookRepository;
+    }
     public async Task<Book> AddBookAsync(Book book)
     {
         return book;
@@ -22,7 +28,4 @@ public class BookService : IBookService
         // Gilla en bok
         return false;
     }
-
-
-
 }
