@@ -497,3 +497,22 @@ project.nuget.cache
 
 Obj/
 obj/
+
+# Build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# Visual Studio Code
+.vscode/
+
+# Visual Studio
+*.vs/
