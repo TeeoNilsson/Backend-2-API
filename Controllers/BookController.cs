@@ -32,9 +32,80 @@ public class BookController : ControllerBase
             return StatusCode(500, "Error");
         }
     }
+
+    [HttpDelete("{bookId}")]
+    public async Task<IActionResult> DeleteBook(Guid bookId)
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            await bookService.DeleteBook(bookId, userId);
+            return Ok();
+        }
+        catch (ArgumentNullException exception)
+        {
+            return NotFound(exception.Message);
+        }
+        catch (Exception exception)
+        {
+            logger.LogError("Unexpected error when deleting: {}", exception.Message);
+            return StatusCode(500, "Unexpected error");
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var books = await bookService.GetAllBooksAsync();
+        return Ok(books);
+    }
+
+    [HttpGet("{bookId}")]
+    public async Task<ActionResult<BookDto>> GetBookById(Guid bookId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var book = await bookService.GetBookByIdAsync(bookId);
+
+        if (book == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(book);
+    }
 }
+
+
 public class CreateBookRequest {
     public required string Title { get; set; }
     public required string Description { get; set; }
     public required string Author { get; set; }
+}
+
+public class BookDto()
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public List<Review> Reviews { get; set; }
+    public string Author { get; set; }
+    public int Likes { get; set; }
+    public string UserId { get; set; }
+
 }

@@ -23,4 +23,50 @@ public class BookService : IBookService
         await bookRepository.Add(book);
         return book;
     }
+
+    public async Task DeleteBook(Guid bookId, string userId)
+    {
+        int deleted = await bookRepository.Delete(bookId, userId);
+        if (deleted == 0)
+        {
+            throw new ArgumentException("Book not found");
+        }
+    }
+
+    public async Task<IEnumerable<BookDto>> GetAllBooksAsync()
+    {
+        var books = await bookRepository.GetAllBooksAsync();
+
+        return books.Select(book => new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Description = book.Description,
+            Reviews = book.Reviews.ToList(),
+            Author = book.Author,
+            Likes = book.Likes,
+            UserId = book.UserId
+        });
+    }
+
+    public async Task<BookDto> GetBookByIdAsync(Guid id)
+    {
+        var book = await bookRepository.GetBookByIdAsync(id);
+
+        if (book == null)
+        {
+            return null;
+        }
+
+        return new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Description = book.Description,
+            Reviews = book.Reviews.ToList(),
+            Author = book.Author,
+            Likes = book.Likes,
+            UserId = book.UserId
+        };
+    }
 }
