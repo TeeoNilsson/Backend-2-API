@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 [Route("api/reviews")]
 [ApiController]
@@ -7,19 +7,33 @@ using Microsoft.AspNetCore.Authorization;
 public class ReviewController : ControllerBase
 {
     private readonly IReviewService _reviewService;
+    private readonly ILogger<ReviewController> _logger;
 
-    public ReviewController(IReviewService reviewService)
+    public ReviewController(IReviewService reviewService, ILogger<ReviewController> logger)
     {
         _reviewService = reviewService;
+        _logger = logger;
     }
 
     //Hämta alla reviews på en specifik bok
     [HttpGet("books/{bookId}/reviews")]
     public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsForBook(Guid bookId)
     {
-        var result = await _reviewService.GetReviewsByBookIdAsync(bookId);
-
-        return Ok(result);
+        try
+        {
+            var result = await _reviewService.GetReviewsByBookIdAsync(bookId);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning("Book not found: {Message}", ex.Message);
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting reviews for book {BookId}", bookId);
+            return StatusCode(500, "Unexpected error");
+        }
     }
 
     //Lägga till en review
@@ -37,11 +51,13 @@ public class ReviewController : ControllerBase
         }
         catch (ArgumentException ex)
         {
+            _logger.LogWarning("Validation error when creating review: {Message}", ex.Message);
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Ett oväntat fel inträffade");
+            _logger.LogError(ex, "Unexpected error when creating review");
+            return StatusCode(500, "Unexpected error");
         }
     }
 
@@ -49,38 +65,62 @@ public class ReviewController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateReview(Guid id, [FromBody] UpdateReviewDto dto)
     {
-        var success = await _reviewService.UpdateReviewAsync(id, dto);
-        if (!success)
+        try
         {
-            return NotFound();
+            var updatedReview = await _reviewService.UpdateReviewAsync(id, dto);
+            return Ok(updatedReview);
         }
-        return NoContent();
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning("Review not found: {Message}", ex.Message);
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating review with ID {id}", id);
+            return StatusCode(500, "Unexpected error");
+        }
     }
 
     //Ta bort review
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteReview(Guid id)
     {
-        var success = await _reviewService.DeleteReviewAsync(id);
-
-        if (!success)
+        try
         {
-            return NotFound();
+            await _reviewService.DeleteReviewAsync(id);
+            return NoContent();
         }
-
-        return NoContent();
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning("Review not found for deletion: {Message}", ex.Message);
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting review {id}", id);
+            return StatusCode(500, "Unexpected error");
+        }
     }
 
     //Like/Dislike
     [HttpPost("{id}/like")]
     public async Task<IActionResult> LikeReview(Guid id)
     {
-        var success = await _reviewService.LikeReviewAsync(id);
-
-        if (!success)
+        try
         {
-            return NotFound();
+            var likedReview = await _reviewService.LikeReviewAsync(id);
+            return Ok(likedReview);
         }
-        return Ok();
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning("Review not found for like: {Message}", ex.Message);
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error liking review {id}", id);
+            return StatusCode(500, "Unexpected error");
+        }
     }
 }
