@@ -69,4 +69,20 @@ public class BookService : IBookService
             UserId = book.UserId
         };
     }
+
+    public async Task<bool> UpdateBookAsync(Guid id, BookDto bookDto)
+    {
+        var existingBook = await bookRepository.GetBookByIdAsync(id);
+
+        if (existingBook == null)
+        {
+            return false;
+        }
+
+        existingBook.Title = bookDto.Title ?? existingBook.Title;
+        existingBook.Author = bookDto.Author ?? existingBook.Author;
+        existingBook.Description = bookDto.Description ?? existingBook.Description;
+
+        return await bookRepository.UpdateBookAsync(existingBook);
+    }
 }

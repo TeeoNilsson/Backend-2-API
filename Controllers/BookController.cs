@@ -89,6 +89,41 @@ public class BookController : ControllerBase
 
         return Ok(book);
     }
+
+    [HttpPut("{bookId}")]
+    public async Task<IActionResult> UpdateBook(Guid bookId, BookDto bookDto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var existingBook = await bookService.GetBookByIdAsync(bookId);
+        if (existingBook == null)
+        {
+            return NotFound();
+        }
+
+        if (existingBook.UserId != userId)
+        {
+            return Unauthorized();
+        }
+
+        var result = await bookService.UpdateBookAsync(bookId, bookDto);
+
+        if (result)
+        {
+            return NoContent();
+        }
+        else
+        {
+            return BadRequest("Failed to update the book");
+        }
+    }
+
+
+
 }
 
 

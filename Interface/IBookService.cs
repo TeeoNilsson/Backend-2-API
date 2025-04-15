@@ -5,5 +5,6 @@ public interface IBookService
     Task DeleteBook(Guid bookId, string userId);
     Task<IEnumerable<BookDto>> GetAllBooksAsync();
     Task<BookDto> GetBookByIdAsync(Guid id);
+    Task<bool> UpdateBookAsync(Guid id, BookDto bookDto);
 }
 

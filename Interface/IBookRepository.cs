@@ -5,4 +5,5 @@ public interface IBookRepository {
     Task<int> Delete(Guid bookId, string userId);
     Task<IEnumerable<Book>> GetAllBooksAsync();
     Task<Book> GetBookByIdAsync(Guid id);
+    Task<bool> UpdateBookAsync(Book book);
 }

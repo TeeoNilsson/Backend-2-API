@@ -31,4 +31,11 @@ public class EFBookRepository : IBookRepository {
             .Include(b => b.Reviews)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
+
+    public async Task<bool> UpdateBookAsync(Book book)
+    {
+        context.Books.Update(book);
+        var result = await context.SaveChangesAsync();
+        return result > 0;
+    }
 }
