@@ -9,10 +9,7 @@ public class BookService : IBookService
 
     public async Task<BookDto> AddBookAsync(CreateBookDto dto)
     {
-        // Här antar vi att User hämtas av UserId – beroende på hur du hanterar det
-        var user = new User { Id = dto.UserId }; // Du kan behöva hämta detta från DB
-
-        var book = new Book(dto.Title, dto.Description, dto.Author, user);
+        var book = new Book(dto.Title, dto.Description, dto.Author);
         var createdBook = await _bookRepository.AddAsync(book);
 
         return new BookDto
