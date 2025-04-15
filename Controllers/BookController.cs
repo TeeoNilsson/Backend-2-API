@@ -91,7 +91,7 @@ public class BookController : ControllerBase
     }
 
     [HttpPut("{bookId}")]
-    public async Task<IActionResult> UpdateBook(Guid bookId, BookDto bookDto)
+    public async Task<IActionResult> UpdateBook(Guid bookId, UpdateBookDto updateBookDto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
@@ -110,7 +110,7 @@ public class BookController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await bookService.UpdateBookAsync(bookId, bookDto);
+        var result = await bookService.UpdateBookAsync(bookId, updateBookDto);
 
         if (result)
         {

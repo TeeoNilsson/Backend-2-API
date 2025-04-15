@@ -70,7 +70,7 @@ public class BookService : IBookService
         };
     }
 
-    public async Task<bool> UpdateBookAsync(Guid id, BookDto bookDto)
+    public async Task<bool> UpdateBookAsync(Guid id, UpdateBookDto updateBookDto)
     {
         var existingBook = await bookRepository.GetBookByIdAsync(id);
 
@@ -79,10 +79,11 @@ public class BookService : IBookService
             return false;
         }
 
-        existingBook.Title = bookDto.Title ?? existingBook.Title;
-        existingBook.Author = bookDto.Author ?? existingBook.Author;
-        existingBook.Description = bookDto.Description ?? existingBook.Description;
+        existingBook.Title = updateBookDto.Title ?? existingBook.Title;
+        existingBook.Author = updateBookDto.Author ?? existingBook.Author;
+        existingBook.Description = updateBookDto.Description ?? existingBook.Description;
 
         return await bookRepository.UpdateBookAsync(existingBook);
     }
+
 }
