@@ -54,8 +54,6 @@ public class ReviewService : IReviewService
             await bookService.GetBookByIdAsync(dto.BookId)
             ?? throw new ArgumentNullException("Book not found");
 
-        //Kolla om det finns en användare med dto.UserId här?
-
         //Skapar en ny review från dton vi fått från controllern
         var newReview = new Review(dto.Rating, dto.Comment, dto.UserId, dto.BookId);
 
@@ -86,14 +84,28 @@ public class ReviewService : IReviewService
             throw new ArgumentException("Comment must not be empty or less than 5 characters");
         }
 
-        var updatedReview = await reviewRepository.UpdateAsync(id, dto);
+        //Hämtar aktuell review från databasen
+        Review? review = await reviewRepository.FindByIdAsync(id);
 
-        return updatedReview;
+        if (review == null)
+        {
+            throw new KeyNotFoundException("Review does not exist.");
+        }
+
+        //Ändrar aktuella värden som skickats in från controllern
+        review.Comment = dto.Comment;
+        review.Rating = dto.Rating;
+
+        //Sparar ändringar i databasen
+        await reviewRepository.Save();
+
+        //Skickar tillbaka uppdaterad review till controllern
+        return review;
     }
 
     public async Task DeleteReviewAsync(Guid reviewId)
     {
-        // TODO: Implementera logik för att radera recension
+        //Tar bort aktuell review från databasen
         int removedCount = await reviewRepository.DeleteAsync(reviewId);
         if (removedCount <= 0)
         {
@@ -103,9 +115,21 @@ public class ReviewService : IReviewService
 
     public async Task<Review> LikeReviewAsync(Guid reviewId)
     {
-        // TODO: Implementera logik för att gilla recensioner
-        var updatedReview = await reviewRepository.LikeAsync(reviewId);
+        //Hämtar aktuell review från databasen
+        Review? review = await reviewRepository.FindByIdAsync(reviewId);
 
-        return updatedReview;
+        if (review == null)
+        {
+            throw new KeyNotFoundException("Review does not exist.");
+        }
+
+        //Ökar gilla antalet med 1
+        review.Likes++;
+
+        //Sparar ändringar i databasen
+        await reviewRepository.Save();
+
+        //Skickar tillbaka uppdaterad review till controllern
+        return review;
     }
 }
