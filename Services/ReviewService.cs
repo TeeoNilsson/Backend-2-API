@@ -66,47 +66,46 @@ public class ReviewService : IReviewService
         return newReview;
     }
 
-    public async Task<bool> UpdateReviewAsync(Guid id, UpdateReviewDto dto)
+    public async Task<Review> UpdateReviewAsync(Guid id, UpdateReviewDto dto)
     {
         //Validera information
         //Kontrollerar att rating är mer än 0
         if (dto.Rating <= 0)
         {
-            /* throw new ArgumentException("Rating must be more than 0"); */
-            return false;
+            throw new ArgumentException("Rating must be more than 0");
         }
 
         if (dto.Rating > 10)
         {
-            /* throw new ArgumentException("Rating can not be more than 10"); */
-            return false;
+            throw new ArgumentException("Rating can not be more than 10");
         }
 
         //Kontrollerar att kommentaren är minst 5 tecken
         if (string.IsNullOrEmpty(dto.Comment) || dto.Comment.Length < 5)
         {
-            /* throw new ArgumentException("Comment must not be empty or less than 5 characters"); */
-            return false;
+            throw new ArgumentException("Comment must not be empty or less than 5 characters");
         }
 
-        return await reviewRepository.UpdateAsync(id, dto);
+        var updatedReview = await reviewRepository.UpdateAsync(id, dto);
+
+        return updatedReview;
     }
 
-    public async Task<bool> DeleteReviewAsync(Guid reviewId)
+    public async Task DeleteReviewAsync(Guid reviewId)
     {
         // TODO: Implementera logik för att radera recension
         int removedCount = await reviewRepository.DeleteAsync(reviewId);
         if (removedCount <= 0)
         {
-            // throw new KeyNotFoundException("Review does not exist.");
-            return false;
+            throw new KeyNotFoundException("Review does not exist.");
         }
-        return true;
     }
 
-    public async Task<bool> LikeReviewAsync(Guid reviewId)
+    public async Task<Review> LikeReviewAsync(Guid reviewId)
     {
         // TODO: Implementera logik för att gilla recensioner
-        return await reviewRepository.LikeAsync(reviewId);
+        var updatedReview = await reviewRepository.LikeAsync(reviewId);
+
+        return updatedReview;
     }
 }
