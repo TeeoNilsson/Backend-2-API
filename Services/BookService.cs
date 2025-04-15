@@ -1,76 +1,72 @@
 public class BookService : IBookService
 {
-    private readonly IBookRepository _bookRepository;
-
+    private readonly IBookRepository bookRepository;
     public BookService(IBookRepository bookRepository)
     {
-        _bookRepository = bookRepository;
+        this.bookRepository = bookRepository;
+    }
+    public async Task<Book> CreateBook(CreateBookRequest request, string userId)
+    {
+        if (string.IsNullOrEmpty(request.Title))
+        {
+            throw new ArgumentException("Title may not be null or empty");
+        }
+        if (string.IsNullOrEmpty(request.Author))
+        {
+            throw new ArgumentException("Author may not be null or empty");
+        }
+        if (string.IsNullOrEmpty(request.Description))
+        {
+            throw new ArgumentException("Description may not be null or empty");
+        }
+        var book = new Book(request.Title, request.Description, request.Author, userId);
+        await bookRepository.Add(book);
+        return book;
     }
 
-    public async Task<BookDto> AddBookAsync(CreateBookDto dto)
+    public async Task DeleteBook(Guid bookId, string userId)
     {
-        var book = new Book(dto.Title, dto.Description, dto.Author);
-        var createdBook = await _bookRepository.AddAsync(book);
-
-        return new BookDto
+        int deleted = await bookRepository.Delete(bookId, userId);
+        if (deleted == 0)
         {
-            Id = createdBook.Id,
-            Title = createdBook.Title,
-            Description = createdBook.Description,
-            Author = createdBook.Author,
-            Likes = createdBook.Likes,
-            Reviews = new List<ReviewDto>() // tom från början
-        };
-    }
-
-    public async Task<BookDto?> GetBookByIdAsync(Guid id)
-    {
-        var book = await _bookRepository.GetByIdAsync(id);
-
-        if (book == null) return null;
-
-        return new BookDto
-        {
-            Id = book.Id,
-            Title = book.Title,
-            Description = book.Description,
-            Author = book.Author,
-            Likes = book.Likes,
-            Reviews = book.Reviews.Select(r => new ReviewDto
-            {
-                Id = r.Id,
-                Rating = r.Rating,
-                Comment = r.Comment,
-                Likes = r.Likes,
-                CreatedAt = r.DateTime
-            }).ToList()
-        };
+            throw new ArgumentException("Book not found");
+        }
     }
 
     public async Task<IEnumerable<BookDto>> GetAllBooksAsync()
     {
-        var books = await _bookRepository.GetAllAsync();
+        var books = await bookRepository.GetAllBooksAsync();
 
         return books.Select(book => new BookDto
         {
             Id = book.Id,
             Title = book.Title,
             Description = book.Description,
+            Reviews = book.Reviews.ToList(),
             Author = book.Author,
             Likes = book.Likes,
-            Reviews = book.Reviews.Select(r => new ReviewDto
-            {
-                Id = r.Id,
-                Rating = r.Rating,
-                Comment = r.Comment,
-                Likes = r.Likes,
-                CreatedAt = r.DateTime
-            }).ToList()
+            UserId = book.UserId
         });
     }
 
-    public async Task<bool> LikeBookAsync(Guid bookId)
+    public async Task<BookDto> GetBookByIdAsync(Guid id)
     {
-        return await _bookRepository.LikeAsync(bookId);
+        var book = await bookRepository.GetBookByIdAsync(id);
+
+        if (book == null)
+        {
+            return null;
+        }
+
+        return new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Description = book.Description,
+            Reviews = book.Reviews.ToList(),
+            Author = book.Author,
+            Likes = book.Likes,
+            UserId = book.UserId
+        };
     }
 }

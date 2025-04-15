@@ -1,22 +1,111 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-[Route("api/books")]
 [ApiController]
+[Route("api/books")]
 [Authorize]
-public class BookController(AppDbContext db) : ControllerBase
+
+public class BookController : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+    private readonly IBookService bookService;
+    private readonly ILogger<BookController> logger;
+    public BookController(IBookService bookService, ILogger<BookController> logger){ 
+        this.bookService = bookService;
+        this.logger = logger;
+    }
+    [HttpPost]
+    public async Task<IActionResult> CreateBook([FromBody]CreateBookRequest request) {
+        try{
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userId == null) {
+                return Unauthorized();
+            }
+            var book = await bookService.CreateBook(request, userId);
+            return CreatedAtAction(nameof(CreateBook), new {id = book.Id}, book);
+        } 
+        catch(ArgumentException exception) {
+            return BadRequest(exception.Message);
+        }
+        catch(Exception exception) {
+            logger.LogError("Error", exception.Message);
+            return StatusCode(500, "Error");
+        }
+    }
+
+    [HttpDelete("{bookId}")]
+    public async Task<IActionResult> DeleteBook(Guid bookId)
     {
-        return await db.Books.ToListAsync();
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            await bookService.DeleteBook(bookId, userId);
+            return Ok();
+        }
+        catch (ArgumentNullException exception)
+        {
+            return NotFound(exception.Message);
+        }
+        catch (Exception exception)
+        {
+            logger.LogError("Unexpected error when deleting: {}", exception.Message);
+            return StatusCode(500, "Unexpected error");
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var books = await bookService.GetAllBooksAsync();
+        return Ok(books);
+    }
+
+    [HttpGet("{bookId}")]
+    public async Task<ActionResult<BookDto>> GetBookById(Guid bookId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var book = await bookService.GetBookByIdAsync(bookId);
+
+        if (book == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(book);
     }
 }
 
 
-// Hämta en bok med specifikt id - inkludera recensioner
-// Lägga till en bok
-// Uppdatera en bok
-// Radera en bok
-// Like/Dislike
+public class CreateBookRequest {
+    public required string Title { get; set; }
+    public required string Description { get; set; }
+    public required string Author { get; set; }
+}
+
+public class BookDto()
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public List<Review> Reviews { get; set; }
+    public string Author { get; set; }
+    public int Likes { get; set; }
+    public string UserId { get; set; }
+
+}

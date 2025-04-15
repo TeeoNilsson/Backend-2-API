@@ -1,47 +1,34 @@
 using Microsoft.EntityFrameworkCore;
-public class BookRepository : IBookRepository
-{
-    private readonly AppDbContext _context;
-
-    public BookRepository(AppDbContext context)
-    {
-        _context = context;
+public class EFBookRepository : IBookRepository {
+    private readonly AppDbContext context;
+    public EFBookRepository(AppDbContext context) {
+        this.context = context;
+    }
+    public async Task Add(Book book) {
+        await context.Books.AddAsync(book);
+        await context.SaveChangesAsync();
     }
 
-    public async Task<Book> AddAsync(Book book)
+    public async Task<int> Delete(Guid bookId, string userId)
     {
-        // TODO : DB-logik för att lägga till bok
-        _context.Books.Add(book);
-        await _context.SaveChangesAsync();
-        return book;
+        int deleted = await context
+            .Books.Where(book => book.Id.Equals(bookId) && book.UserId.Equals(userId))
+            .ExecuteDeleteAsync();
+
+        return deleted;
     }
 
-    public async Task<Book?> GetByIdAsync(Guid id)
+    public async Task<IEnumerable<Book>> GetAllBooksAsync()
     {
-        // TODO: DB-logik för att hämta en bok med id från db
-        return await _context.Books
-        .Include(b => b.Reviews) //Hämta recensioner
-        .FirstOrDefaultAsync(b => b.Id == id);
-        // .FindAsync(id) inkluderar inte data som reviews
+        return await context.Books
+            .Include(b => b.Reviews)
+            .ToListAsync();
     }
 
-    public async Task<IEnumerable<Book>> GetAllAsync()
+    public async Task<Book> GetBookByIdAsync(Guid id)
     {
-        // TODO: DB-logik för att hämta alla böcker från db
-        return await _context.Books
-        .Include(b => b.Reviews) //Hämta recensioner
-        .ToListAsync();
-    }
-
-    public async Task<bool> LikeAsync(Guid bookId)
-    {   // TODO: Gilla en bok
-        var book = await _context.Books.FindAsync(bookId);
-
-        if (book == null)
-            return false;
-
-        book.Likes++;
-        await _context.SaveChangesAsync();
-        return true;
+        return await context.Books
+            .Include(b => b.Reviews)
+            .FirstOrDefaultAsync(b => b.Id == id);
     }
 }

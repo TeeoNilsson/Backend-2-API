@@ -24,13 +24,15 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 // Registrering av Book Service och Repository
 builder.Services.AddScoped<IBookService, BookService>();
-builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IBookRepository, EFBookRepository>();
 
 builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
 builder.Services.AddIdentityCore<User>()
 .AddEntityFrameworkStores<AppDbContext>()
 .AddApiEndpoints();
 builder.Services.AddAuthorization();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -43,5 +45,5 @@ app.UseHttpsRedirection();
 app.MapIdentityApi<User>();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapControllers();
 app.Run();
