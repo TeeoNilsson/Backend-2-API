@@ -54,6 +54,11 @@ public class ReviewController : ControllerBase
             _logger.LogWarning("Validation error when creating review: {Message}", ex.Message);
             return BadRequest(ex.Message);
         }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning("Book not found: {Message}", ex.Message);
+            return NotFound(ex.Message);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error when creating review");
@@ -69,6 +74,11 @@ public class ReviewController : ControllerBase
         {
             var updatedReview = await _reviewService.UpdateReviewAsync(id, dto);
             return Ok(updatedReview);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning("Validation error when updating review: {Message}", ex.Message);
+            return BadRequest(ex.Message);
         }
         catch (KeyNotFoundException ex)
         {
