@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+// namespace bokRecension;
 
 var builder = WebApplication.CreateBuilder(args);
 
