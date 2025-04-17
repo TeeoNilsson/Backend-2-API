@@ -46,7 +46,7 @@ public class ReviewController : ControllerBase
             return CreatedAtAction(
                 nameof(GetReviewsForBook),
                 new { bookId = dto.BookId },
-                new { id = createdId }
+                createdId
             );
         }
         catch (ArgumentException ex)
