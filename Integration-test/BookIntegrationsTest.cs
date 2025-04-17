@@ -3,16 +3,13 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-public class BookIntegrationTests : IClassFixture<TestWebApplicationFactory<Program>>
+public class BookIntegrationTests(TestWebApplicationFactory<Program> factory) : IClassFixture<TestWebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
 
-    public BookIntegrationTests(TestWebApplicationFactory<Program> factory)
-    {
-        _client = factory.CreateClient();
-    }
+     private readonly TestWebApplicationFactory<Program> factory = factory;
 
-    [Fact]
+  [Fact]
     public async Task CreateBook_ReturnsSuccess()
     {
         var request = new CreateBookDto
