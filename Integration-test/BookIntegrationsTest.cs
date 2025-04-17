@@ -23,7 +23,7 @@ public class BookIntegrationTests : IClassFixture<TestWebApplicationFactory<Prog
             UserId = Guid.NewGuid() // lägg till en användare om du behöver validera det
         };
 
-        var response = await _client.PostAsJsonAsync("/book", request);
+        var response = await _client.PostAsJsonAsync("/api/books", request);
 
         response.EnsureSuccessStatusCode();
         var book = await response.Content.ReadFromJsonAsync<BookDto>();

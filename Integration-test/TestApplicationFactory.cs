@@ -23,6 +23,15 @@ public class TestWebApplicationFactory<TProgram> : WebApplicationFactory<TProgra
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        var projectDir = Directory.GetCurrentDirectory();
+        
+        if (projectDir.EndsWith("\\Integrations-test"))
+        {
+            projectDir = Directory.GetParent(projectDir).FullName;
+        }
+
+        builder.UseContentRoot(projectDir);
+
         builder.ConfigureServices(services =>
         {
             // Radera alla existerande db-relaterade dependencies
